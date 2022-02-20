@@ -83,11 +83,14 @@ WSGI_APPLICATION = 'commerce.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dfv3kneado0j4q',
+        'HOST':'ec2-54-224-64-114.compute-1.amazonaws.com',
+        'PORT':5432,
+        'USER':'wgjdipbzljffgm',
+        'PASSWORD':'8ba34b34df3541cc1d3e9838e8ff39f63134436e54f86eab5458a7fae8074b0b',
     }
 }
-
 db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES['default'].update(db_from_env)
 
