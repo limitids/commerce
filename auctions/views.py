@@ -111,7 +111,7 @@ def listing(request,listing):
             topuser = each.user
     
     if request.method == "POST" and request.POST["watchlist"] == 'true':
-        Watchlist.objects.create(userid=request.user,listing=Listing.objects.get(id=listing))
+        Watchlist.objects.create(userid=request.user,listing=Listing.objects.get(id=listing.id))
         return HttpResponseRedirect(reverse("watchlist"))
     if request.method == "POST" and request.POST["close"] == 'true':
         Listing.objects.filter(id=listing.id).delete()
