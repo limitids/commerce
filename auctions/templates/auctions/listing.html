@@ -1,0 +1,53 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h1>Listing: {{listing.title}}</h1>
+
+    {% if user.is_authenticated %}
+        {% if watchlisted == False%}
+            <form action = "{% url 'listing' listing.id%}" method="POST">
+                {%csrf_token%}
+                <input name = "bid" value="false" type = "hidden">
+                <input name="watchlist"  value="true" type="hidden">
+                <input name = "close" value="false" type = "hidden">
+                <button type="submit" style="background-color:rgb(197, 197, 197);color:white;border-style:none;">WatchList</button>
+            </form>
+        {% else %}
+            <button type="submit" style="background-color:gray;color:white;border-style:none;">Watchlisted</button>
+        {% endif %}
+    {% endif %}
+
+    <div id="item" style="margin:10px;">
+        <img src="{{listing.img}}" style="height:300px">
+        <h6>{{listing.desc}}</h6>
+        <h2>${{listing.startingbid}}</h2>
+    </div>
+
+    <p> {{bidcount}} bids so far. Top bid is from <strong>{{topuser}}</strong></p>
+    {% if user.is_authenticated and user != author%}
+    <form action = "{% url 'listing' listing.id %}" method = "POST">
+        {%csrf_token%}
+        <input name = "watchlist" value="false" type = "hidden">
+        <input name = "bid" value="true" type = "hidden">
+        <input name = "close" value="false" type = "hidden">
+        {{bidform}}
+        <input type="submit">
+    </form>
+    {% endif %}
+    {% if user.is_authenticated == False %}
+    <a href="{% url 'login' %}">Login to bid.</a>
+    {% endif %}
+
+    {% if user == author %}
+    <h6>{{topuser}} will recieve the item upon closure.</h6>
+    <form action = "{% url 'listing' listing.id %}" method = "POST">
+        {%csrf_token%}
+        <input name = "watchlist" value="false" type = "hidden">
+        <input name = "bid" value="false" type = "hidden">
+        <input name = "close" value="true" type = "hidden">
+        <button type="submit" style="background-color:red;color:white;border-style:none;">Close Auction</button>
+    </form>
+    {% endif %}
+
+
+{% endblock %}
