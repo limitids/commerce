@@ -22,12 +22,12 @@ class Bid(models.Model):
     listing = models.ForeignKey(Listing, on_delete = models.CASCADE)
     amount = models.IntegerField()
 
-class Comment(models.Model):
-    listing = models.ForeignKey(Listing,on_delete = models.CASCADE)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    title = models.TextField()
-    content = models.TextField()
-
 class Watchlist(models.Model):
     userid = models.ForeignKey(User,on_delete = models.CASCADE)
     listing = models.ForeignKey(Listing,on_delete=models.CASCADE)
+
+class Comment(models.Model):
+    userid = models.ForeignKey(User,on_delete = models.CASCADE,db_column='userid')
+    listing = models.ForeignKey(Listing,on_delete=models.CASCADE,db_column='listing')
+    content = models.TextField(default='')
+    timestamp = models.DateTimeField(auto_now_add=True)

@@ -10,6 +10,7 @@
                 <input name = "bid" value="false" type = "hidden">
                 <input name="watchlist"  value="true" type="hidden">
                 <input name = "close" value="false" type = "hidden">
+                <input name="comment" value = "false" type="hidden">
                 <button type="submit" style="background-color:rgb(197, 197, 197);color:white;border-style:none;">WatchList</button>
             </form>
         {% else %}
@@ -24,19 +25,6 @@
     </div>
 
     <p> {{bidcount}} bids so far. Top bid is from <strong>{{topuser}}</strong></p>
-    {% if user.is_authenticated and user != author%}
-    <form action = "{% url 'listing' listing.id %}" method = "POST">
-        {%csrf_token%}
-        <input name = "watchlist" value="false" type = "hidden">
-        <input name = "bid" value="true" type = "hidden">
-        <input name = "close" value="false" type = "hidden">
-        {{bidform}}
-        <input type="submit">
-    </form>
-    {% endif %}
-    {% if user.is_authenticated == False %}
-    <a href="{% url 'login' %}">Login to bid.</a>
-    {% endif %}
 
     {% if user == author %}
     <h6>{{topuser}} will recieve the item upon closure.</h6>
@@ -45,9 +33,56 @@
         <input name = "watchlist" value="false" type = "hidden">
         <input name = "bid" value="false" type = "hidden">
         <input name = "close" value="true" type = "hidden">
+        <input name="comment" value = "false" type="hidden">
         <button type="submit" style="background-color:red;color:white;border-style:none;">Close Auction</button>
     </form>
     {% endif %}
+    
+    {% if user.is_authenticated %}
+
+        {% if user != author %}
+        <form action = "{% url 'listing' listing.id %}" method = "POST">
+            {%csrf_token%}
+            <input name = "watchlist" value="false" type = "hidden">
+            <input name = "bid" value="true" type = "hidden">
+            <input name = "close" value="false" type = "hidden">
+            <input name="comment" value = "false" type="hidden">
+            {{bidform}}
+            <input type="submit">
+        </form>
+        {% endif %}
 
 
+
+    {% endif %}
+    {% if user.is_authenticated == False %}
+    <a href="{% url 'login' %}">Login to bid.</a>
+    {% endif %}
+
+
+    <h1 style="margin-top:60px;">Comments</h1>
+    
+    {% if user.is_authenticated %}
+
+    <h6>Add a comment</h6>
+    <form action = "{% url 'listing' listing.id %}" method = "POST">
+        {%csrf_token%}
+        <input name = "watchlist" value="false" type = "hidden">
+        <input name = "bid" value="false" type = "hidden">
+        <input name = "close" value="false" type = "hidden">
+        <input name="comment" value = "true" type="hidden">
+        {{commentForm}}
+        <input type="submit">
+
+    </form>
+    
+    {% endif %}
+
+    {% for comment in comments %}
+    <div style="display:flex; margin-top:20px; flex-direction: column;">
+        <h6><strong>{{comment.userid.username}}</strong></h6>
+        <p>{{comment.content}}</p>
+        <p style="color:gray;">{{comment.timestamp}}</p>
+    </div>
+    {% endfor %}
 {% endblock %}

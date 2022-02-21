@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
-from .models import User,Listing, Watchlist, Bid
+from .models import User,Listing, Watchlist, Bid, Comment
 
 class ListingForm(forms.Form):
     title = forms.CharField(label="Title")
@@ -16,6 +16,9 @@ class ListingForm(forms.Form):
 
 class BidForm(forms.Form):
     amount = forms.IntegerField(label="Bid")
+
+class CommentForm(forms.Form):
+    content = forms.CharField(label="")
 
 
 def index(request):
@@ -101,6 +104,8 @@ def create(request):
 def listing(request,listing):
     listing = Listing.objects.get(id=listing)
     bids = Bid.objects.all().filter(listing=listing)
+    comments = Comment.objects.all().filter(listing=listing).order_by('-timestamp')
+    print(comments)
     topbid = 0
     bidcount = 0
     topuser = ''
@@ -116,6 +121,12 @@ def listing(request,listing):
     if request.method == "POST" and request.POST["close"] == 'true':
         Listing.objects.filter(id=listing.id).delete()
         return HttpResponseRedirect(reverse("index"))
+    if request.method == "POST" and request.POST["comment"] == 'true':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            content = form.cleaned_data['content']
+            Comment.objects.create(userid=request.user,listing=Listing.objects.get(id=listing.id),content=content)
+        return HttpResponseRedirect(reverse('listing',args=[listing.id]))
     if request.method == "POST" and request.POST["bid"] == 'true': 
         form = BidForm(request.POST)
         if form.is_valid():
@@ -137,7 +148,9 @@ def listing(request,listing):
             "bidform": BidForm,
             "bidcount": bidcount,
             "topuser": topuser,
-            "author": listing.author
+            "author": listing.author,
+            "comments": comments,
+            "commentForm":CommentForm
         })
 
 def watchlist(request):
