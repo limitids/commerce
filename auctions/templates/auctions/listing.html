@@ -18,11 +18,10 @@
         {% endif %}
     {% endif %}
 
-    <div id="item" style="margin:10px;">
         <img src="{{listing.img}}" style="height:300px">
         <h6>{{listing.desc}}</h6>
-        <h2>${{listing.startingbid}}</h2>
-    </div>
+        <h2>Price: ${{listing.startingbid}}</h2>
+        <p>Category of <a href="{% url 'category' listing.category %}">{{listing.category}}</a></p>
 
     <p> {{bidcount}} bids so far. Top bid is from <strong>{{topuser}}</strong></p>
 

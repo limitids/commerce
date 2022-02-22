@@ -1,0 +1,17 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Listings with Category {{category}}</h2>
+    {% for listing in listings %}
+    <div id = "list" style="display: flex; flex-direction: row; margin:10px;">
+        <img src="{{listing.img}}" style="height:100px; margin:10px;">
+        <div id = "list" style="display: flex; flex-direction: column;">
+        <a id="list" href="{% url 'listing' listing.id %}">{{listing.title}}</a>
+        <h6>Price: ${{listing.startingbid}}</h6>
+        <p>{{listing.desc}}</p>
+        <p style="color:gray; font-size:12px;">Created: {{listing.timestamp}} UTC</p>
+        </div>
+    </div>
+
+    {% endfor %}
+{% endblock %}

@@ -31,3 +31,6 @@ class Comment(models.Model):
     listing = models.ForeignKey(Listing,on_delete=models.CASCADE,db_column='listing')
     content = models.TextField(default='')
     timestamp = models.DateTimeField(auto_now_add=True)
+
+class Category(models.Model):
+    name = models.TextField()

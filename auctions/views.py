@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
-from .models import User,Listing, Watchlist, Bid, Comment
+from .models import User,Listing, Watchlist, Bid, Comment, Category
 
 class ListingForm(forms.Form):
     title = forms.CharField(label="Title")
@@ -92,8 +92,11 @@ def create(request):
                 img = form.cleaned_data["img"]
             if form.cleaned_data["category"]:
                 category = form.cleaned_data["category"]
+            else:
+                category = 'None'
             listing = Listing.objects.create(title = title,desc=desc,startingbid=startingbid,author=request.user,img=img,category=category)
             Bid.objects.create(amount=startingbid,listing=listing,user=request.user)
+            Category.objects.create(name=category)
             return HttpResponseRedirect(reverse("index"))
 
     return render(request,'auctions/create.html', {
@@ -162,3 +165,19 @@ def watchlist(request):
     return render(request,'auctions/watchlist.html',{
         'listings': listings
     })
+
+def categories(request):
+    categories = Category.objects.all()
+
+    return render(request,'auctions/categories.html', {
+        'categories':categories
+    })
+
+def category(request,category):
+    category_chosen = Category.objects.all().filter(name=category)
+    listings = Listing.objects.all().filter(category=category)
+    return render(request,'auctions/category.html',{
+        'listings': listings,
+        'category': category
+    })
+
